@@ -16,9 +16,16 @@ def main():
     #nodes are a tuple (supervoxel id, angular component id)
     start_node = (20, 0)
     goal_node = (80, 0)
+    start_angle = 180
+    goal_angle = 180
+
     path = dmg.get_shortest_path(start_node, goal_node)
+    angles = dmg.get_rotations(start_angle, goal_angle, path)
     dmg.plot_graph()
-    dmg.plot_path(path)
+    dmg.plot_path(path, angles)
+    #plot the start and the goal to make things clear
+    dmg.plot_finger(start_node, start_angle, color='green')
+    dmg.plot_finger(goal_node, goal_angle, color='red')
     dmg.visualize()
 
 if __name__ == '__main__':
