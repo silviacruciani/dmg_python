@@ -196,7 +196,7 @@ class DexterousManipulationGraph():
 
 
     def get_shortest_path(self, start, goal):
-        '''finds the shortest path in only one component (disregards opposite finger)'''
+        '''finds the shortest path in only one component'''
         #sanity check on the component (if they are different no in-hand path can be found)
         if self._node_to_component[start] != self._node_to_component[goal]:
             return None
