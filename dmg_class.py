@@ -331,11 +331,6 @@ class DexterousManipulationGraph():
             self.plot_finger(node1, curr_angle, color)
         self._figure.show()
 
-    # def axis_angle_matrix(axis, angle):
-    #     '''returns '''
-    #     def skew_symmetric(axis):
-
-
 
     def plot_finger(self, node, angle, color = 'yellow'):
         '''use to plot a finger in a given configuration'''
