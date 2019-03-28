@@ -240,7 +240,15 @@ class DexterousManipulationGraph():
             neighbor_nodes = self._adjacency_list[current_node]
             for n in neighbor_nodes:
                 new_d = distances[current_node] + nodes_distance(n, current_node)
-                #TO DO: check if the opposite finger is valid
+                #check if the opposite finger is valid
+                valid = False
+                opposite_nodes = self.get_opposite_nodes(n)
+                for opposite_n in opposite_nodes:
+                    if self._node_to_component[opposite_n] in admissible_opposite_components:
+                        valid = True
+                if not valid:
+                    new_d = sys.float_info[0]
+
                 if new_d < distances[n]:
                     distances[n] = new_d
                     prev[n] = current_node
