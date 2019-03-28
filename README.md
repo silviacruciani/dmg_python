@@ -7,6 +7,7 @@ For more information on DMG: [link](https://ieeexplore.ieee.org/document/8594303
 - numpy
 - numpy-stl
 - pycaster
+- scipy
 
 ### example:
 run the dmg_example.py file to visualize the DMG corresponding to a crayola box and an example of in-hand path.
