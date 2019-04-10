@@ -14,6 +14,7 @@ class DexterousManipulationGraph():
         self._node_to_component = None
         self._node_to_position = None
         self._component_to_normal = None
+        self._component_to_zero_axis = None
         self._component_to_nodes = None
         self._node_to_angles = None
         self._supervoxel_angle_to_angular_component = None
@@ -80,13 +81,17 @@ class DexterousManipulationGraph():
     def read_component_to_normal(self, filename):
         '''reads the normal associated to each component'''
         component_to_normal = dict()
+        component_to_zero_axis = dict()
         f = open(filename, 'r')
         for x in f:
             y = x.split()
             component = int(y[0])
             normal = np.array([float(y[1]), float(y[2]), float(y[3])])
-            component_to_normal[component] = normal;
+            axis = np.array([float(y[4]), float(y[5]), float(y[6])])
+            component_to_normal[component] = normal
+            component_to_zero_axis[component] = axis
         self._component_to_normal = component_to_normal
+        self._component_to_zero_axis = component_to_zero_axis
 
     def read_node_to_angles(self, filename):
         '''reads the admissible angles in one node. These nodes are in degrees!'''
@@ -117,26 +122,6 @@ class DexterousManipulationGraph():
             sv_to_angle_component[supervoxel_id].add(int(y[2]))
         self._supervoxel_angle_to_angular_component = node_angle_to_angle_component
         self._supervoxel_to_angular_component = sv_to_angle_component
-
-    def get_zero_angle_axis(self, nx):
-        '''given the component normal nx, returns the ny axis that is the axis corresponding to an angle of 0 in the ny nz plane'''
-        a = 0
-        b = 0
-        c = 0
-        if abs(nx[0]>0.000001):
-            b = 0
-            c = math.sqrt(nx[0]**2/(nx[0]**2 + nx[2]**2))
-            a = -nx[2]**2/nx[0]
-        elif abs(nx[1]>0.000001):
-            c = 0;
-            a = math.sqrt(nx[1]**2/(nx[1]**2 + nx[0]**2))
-            b = -nx[0]**2/nx[1]
-        else:
-            a = 0;
-            b = math.sqrt(nx[2]**2/(nx[2]**2 + nx[1]**2))
-            c = -nx[1]**2/nx[2]
-        ny = np.array([a, b, c])
-        return ny
 
     def get_closest_nodes(self, point):
         '''returns the nodes whose center is the closest to the given point. They can be two if there are nodes with different angular component'''
@@ -267,7 +252,7 @@ class DexterousManipulationGraph():
         '''return a sequence of angles to associate with the given path'''
         cc = self._node_to_component[path[0]]
         normal = self._component_to_normal[cc]
-        zero_axis = self.get_zero_angle_axis(normal)
+        zero_axis = self._component_to_zero_axis[cc]
         planar_zero_axis = -zero_axis[0:2]
         planar_zero_axis = planar_zero_axis/np.linalg.norm(planar_zero_axis)
         
@@ -337,7 +322,7 @@ class DexterousManipulationGraph():
         point = self._node_to_position[node]    
         #the zero axis is opposite to the finger axis in the convention
         normal = self._component_to_normal[self._node_to_component[node]]
-        zero_axis = self.get_zero_angle_axis(normal)      
+        zero_axis = self._component_to_zero_axis[self._node_to_component[node]]      
         #rotate the zero angle axis by the angle
         theta = angle*math.pi/180
         #get the axis-angle matrix 
